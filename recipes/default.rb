@@ -17,6 +17,20 @@
 # limitations under the License.
 #
 
+# Set up some user accounts as system users to prevent mayhem later
+group 'ossec' do
+  system true
+end
+
+%w(ossec ossecm ossecr).each do |oscuser|
+  user oscuser do
+    shell '/bin/false'
+    system true
+    gid 'ossec'
+    home node['ossec']['user']['dir']
+  end
+end
+
 include_recipe "build-essential"
 
 ossec_dir = "ossec-hids-#{node['ossec']['version']}"
