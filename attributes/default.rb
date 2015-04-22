@@ -34,7 +34,7 @@ default['ossec']['data_bag']['name']       = "ossec"
 default['ossec']['data_bag']['ssh']        = "ssh"
 
 # server-only
-default['ossec']['server']['maxagents'] = 256
+default['ossec']['server']['maxagents'] = 2048
 
 # used to populate config files and preload values for install
 default['ossec']['user']['language'] = "en"
@@ -48,11 +48,11 @@ default['ossec']['user']['update'] = false
 default['ossec']['user']['update_rules'] = true
 default['ossec']['user']['binary_install'] = false
 default['ossec']['user']['agent_server_ip'] = nil
-default['ossec']['user']['enable_email'] = true
-default['ossec']['user']['email'] = "ossec@example.com"
+default['ossec']['user']['enable_email'] = false
+default['ossec']['user']['email'] = "secops@datadoghq.com"
 default['ossec']['user']['smtp'] = "127.0.0.1"
 default['ossec']['user']['remote_syslog'] = false
-default['ossec']['user']['syslog_output']['enabled'] = false
+default['ossec']['user']['syslog_output']['enabled'] = true
 default['ossec']['user']['syslog_output']['server'] = '127.0.0.1'
 default['ossec']['user']['syslog_output']['port'] = '514'
 default['ossec']['user']['syslog_output']['format'] = 'default'
