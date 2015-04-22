@@ -18,9 +18,17 @@
 #
 
 # Stop service
-service "ossec" do
-  action [:stop, :disable]
+# Fake the restart to avoid the delayed notification
+ruby_block 'stop service' do
+  block do
+    r = resources('service[ossec]')
+    r.restart_command('/bin/true')
+    r.run_action(:stop)
+    r.run_action(:disable)
+  end
 end
+
+ossec_dir = "ossec-hids-#{node['ossec']['version']}"
 
 # Remove files
 file "#{Chef::Config[:file_cache_path]}/#{ossec_dir}/etc/preloaded-vars.conf" do
@@ -32,15 +40,18 @@ directory "#{node['ossec']['user']['dir']}" do
   recursive true
 end
 
-# Remove users
-group 'ossec' do
+file "/etc/init.d/ossec" do
   action :delete
 end
 
+# Remove users
 %w(ossec ossecm ossecr).each do |oscuser|
   user oscuser do
-    action :delete
+    action :remove
   end
 end
 
+group 'ossec' do
+  action :remove
+end
 
