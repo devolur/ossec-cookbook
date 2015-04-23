@@ -21,15 +21,13 @@
 # Fake the restart to avoid the delayed notification
 service 'ossec' do
   supports :start => true, :stop => true, :disable => true, :status => true
-  action :nothing
+  action [:stop, :disable]
 end
 
 ruby_block 'stop service' do
   block do
     r = resources('service[ossec]')
-    r.restart_command('/bin/true')
-    r.run_action(:stop)
-    r.run_action(:disable)
+    r.restart_command('/bin/true') unless r.nil?
   end
 end
 
