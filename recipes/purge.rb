@@ -17,6 +17,11 @@
 # limitations under the License.
 #
 
+service 'ossec' do
+  supports :start => true, :stop => true, :disable => true, :status => true
+  action :none
+end
+
 # Stop service
 # Fake the restart to avoid the delayed notification
 ruby_block 'stop service' do
