@@ -18,7 +18,7 @@
 #
 
 service 'ossec' do
-  supports :start => true, :stop => true, :restart => true, :status => true
+  supports :start => true, :stop => true, :disable => true, :status => true
   action :none
 end
 
