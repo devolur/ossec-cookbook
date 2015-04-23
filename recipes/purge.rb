@@ -17,13 +17,13 @@
 # limitations under the License.
 #
 
-service 'ossec' do
-  supports :start => true, :stop => true, :disable => true, :status => true
-  action :none
-end
-
 # Stop service
 # Fake the restart to avoid the delayed notification
+service 'ossec' do
+  supports :start => true, :stop => true, :disable => true, :status => true
+  action :nothing
+end
+
 ruby_block 'stop service' do
   block do
     r = resources('service[ossec]')
@@ -36,10 +36,6 @@ end
 ossec_dir = "ossec-hids-#{node['ossec']['version']}"
 
 # Remove files
-file "#{Chef::Config[:file_cache_path]}/#{ossec_dir}/etc/preloaded-vars.conf" do
-  action :delete
-end
-
 directory "#{node['ossec']['user']['dir']}" do
   action :delete
   recursive true
