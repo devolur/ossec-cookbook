@@ -1,7 +1,7 @@
 Description
 ====
 
-Installs OSSEC from source in a server-agent installation. See:
+Installs OSSEC from source in a local installation. See:
 
 http://www.ossec.net/doc/manual/installation/index.html
 
@@ -63,14 +63,6 @@ The `user` attributes are used to populate the config file (ossec.conf) and prel
 * `node['ossec']['user']['pf_table']` - The PF table to use on BSD. Default is false, set this to the desired table if enabling `pf`.
 * `node['ossec']['user']['white_list']` - Array of additional IP addresses to white list. Default is empty.
 
-These attributes are used to setup the OSSEC Web UI.
-
-* `node['ossec']['wui']['checksum']`     - Defaults to "142febadfd4b0de5a13ebd93c13eedfbee5f1899b6ee71c248054c14f47b8089"
-* `node['ossec']['wui']['version']`      - Defaults to "0.3"
-* `node['ossec']['wui']['url']`          - Defaults to "http://www.ossec.net/files/ossec-wui-0.3.tar.gz"
-* `node['ossec']['users_databag']`       - Defaults to 'users'
-* `node['ossec']['users_databag_group']` - Defaults to 'sysadmins'
-
 Recipes
 ====
 
@@ -79,136 +71,19 @@ default
 
 The default recipe downloads and installs the OSSEC source and makes sure the configuration file is in place and the service is started. Use only this recipe if setting up local-only installation. The server and client recipes (below) will set their installation type and include this recipe.
 
-agent
+purge
 ----
 
-OSSEC uses the term `agent` instead of client. The agent recipe includes the `ossec::client` recipe.
-
-client
-----
-
-Configures the system as an OSSEC agent to the OSSEC server. This recipe will search for the server based on `node['ossec']['server_role']`. It will also set the `install_type` and `agent_server_ip` attributes. The ossecd user will be created with the SSH key so the server can distribute the agent key.
-
-server
-----
-
-Sets up a system to be an OSSEC server. This recipe will set the `node['ossec']['server']['maxagents']` value to 1024 if it is not set on the node (e.g., via a role). It will search for all nodes that have an `ossec` attribute and add them as an agent.
-
-To manage additional agents on the server that don't run chef, or for agentless OSSEC configuration (for example, routers), add a new node for them and create the `node['ossec']['agentless']` attribute as true. For example if we have a router named gw01.example.com with the IP `192.168.100.1`:
-
-    % knife node create gw01.example.com
-    {
-      "name": "gw01.example.com",
-      "json_class": "Chef::Node",
-      "automatic": {
-      },
-      "normal": {
-        "hostname": "gw01",
-        "fqdn": "gw01.example.com",
-        "ipaddress": "192.168.100.1",
-        "ossec": {
-          "agentless": true
-        }
-      },
-      "chef_type": "node",
-      "default": {
-      },
-      "override": {
-      },
-      "run_list": [
-      ]
-    }
-
-Enable agentless monitoring in OSSEC and register the hosts on the server. Automated configuration of agentless nodes is not yet supported by this cookbook. For more information on the commands and configuration directives required in `ossec.conf`, see the [OSSEC Documentation](http://www.ossec.net/doc/manual/agent/agentless-monitoring.html)
-
-wui
-----
-
-Installs and configures OSSEC Web UI.  Requires users to be setup in a data bag (see __Data Bags__ section below).
+Removes OSSEC altogether
 
 Usage
 ====
 
-The cookbook can be used to install OSSEC in one of the three types:
+The cookbook can be used to install OSSEC in one way only:
 
 * local - use the ossec::default recipe.
-* server - use the ossec::server recipe.
-* agent - use the ossec::client recipe
 
 For local-only installations, add just `recipe[ossec]` to the node run list, or put it in a role (like a base role).
-
-Server/Agent
-----
-
-This section describes how to use the cookbook for server/agent configurations.
-
-The server will use SSH to distribute the OSSEC agent keys. Create a data bag `ossec`, with an item `ssh`. It should have the following structure:
-
-    {
-      "id": "ssh",
-      "pubkey": "",
-      "privkey": ""
-    }
-
-Generate an ssh keypair and get the privkey and pubkey values. The output of the two ruby commands should be used as the privkey and pubkey values respectively in the data bag.
-
-    ssh-keygen -t rsa -f /tmp/id_rsa
-    ruby -e 'puts IO.read("/tmp/id_rsa")'
-    ruby -e 'puts IO.read("/tmp/id_rsa.pub")'
-
-For the OSSEC server, create a role, `ossec_server`. Add attributes per above as needed to customize the installation.
-
-    % cat roles/ossec_server.rb
-    name "ossec_server"
-    description "OSSEC Server"
-    run_list("recipe[ossec::server]")
-    override_attributes(
-      "ossec" => {
-        "user" => {
-          "email" => "ossec@yourdomain.com",
-          "smtp" => "smtp.yourdomain.com"
-        }
-      }
-    )
-
-For OSSEC agents, create a role, `ossec_client`.
-
-    % cat roles/ossec_client.rb
-    name "ossec_client"
-    description "OSSEC Client Agents"
-    run_list("recipe[ossec::client]")
-    override_attributes(
-      "ossec" => {
-        "user" => {
-          "email" => "ossec@yourdomain.com",
-          "smtp" => "smtp.yourdomain.com"
-        }
-      }
-    )
-
-DATA BAGS
----------
-### Users
-
-Create a `users` data bag that will contain the users that will be able to log into the OSSEC webui. Each user can use htauth with a specified password. Users that should be able to log in should be in the sysadmin group. Example user data bag item:
-
-```javascript
-{
-  "id": "osssecadmin",
-  "groups": "sysadmin",
-  "htpasswd": "hashed_htpassword"
-}
-```
-
-The htpasswd must be the hashed value. Get this value with htpasswd:
-
-    % htpasswd -n -s ossec
-    New password:
-    Re-type new password:
-    ossec:{SHA}oCagzV4lMZyS7jl2Z0WlmLxEkt4=
-
-For example use the `{SHA}oCagzV4lMZyS7jl2Z0WlmLxEkt4=` value in the data bag.
-
 
 Customization
 ----
@@ -223,6 +98,7 @@ License and Author
 ====
 
 Copyright 2010, Opscode, Inc (<legal@opscode.com>)
+Copyright 2015, Datadog, Inc (<package@opscode.com>)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

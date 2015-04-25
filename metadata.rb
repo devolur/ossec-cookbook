@@ -1,12 +1,12 @@
 name             "ossec"
-maintainer       "Joshua Timberman"
-maintainer_email "cookbooks@housepub.org"
+maintainer       "Alexis Le-Quoc"
+maintainer_email "alq@datadoghq.com"
 license          "Apache 2.0"
 description      "Installs/Configures ossec"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "1.0.7"
+version          "1.0.8"
 
-%w{ build-essential apt apache2 }.each do |pkg|
+%w{ build-essential apt }.each do |pkg|
   depends pkg
 end
 
