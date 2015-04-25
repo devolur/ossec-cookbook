@@ -5,3 +5,4 @@ bin
 .kitchen/
 .kitchen.local.yml
 Berksfile.lock
+.ruby-version
