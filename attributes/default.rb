@@ -62,3 +62,6 @@ default['ossec']['user']['firewall_response'] = true
 default['ossec']['user']['pf'] = false
 default['ossec']['user']['pf_table'] = false
 default['ossec']['user']['white_list'] = []
+
+# List of files/directories to skip
+default['ossec']['syscheck']['ignore'] = []
