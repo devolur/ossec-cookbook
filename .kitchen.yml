@@ -12,7 +12,12 @@ platforms:
 suites:
 - name: default
   run_list: ["recipe[ossec]"]
-  attributes: {}
+  attributes:
+    ossec:
+      syscheck:
+        ignore:
+          - /etc/datadog
+          - /dev/.blkid.tab
 - name: purge
   run_list:
     - "recipe[ossec]"
