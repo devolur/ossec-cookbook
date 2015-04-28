@@ -123,6 +123,13 @@
     <ignore>/etc/svc/volatile</ignore>
     <ignore>/dev/.blkid.tab</ignore>
     <ignore>/dev/.blkid.tab.old</ignore>
+    <% unless node['ossec']['syscheck']['ignore'].empty? -%>
+    <%   node['ossec']['syscheck']['ignore'].each do |ign| -%>
+    <ignore><%= ign %></ignore>
+    <%   end -%>
+    <% end -%>
+</ossec_config>
+    <ignore>/etc/datadog</ignore>
 
     <!-- Windows files to ignore -->
     <ignore>C:\WINDOWS/System32/LogFiles</ignore>
