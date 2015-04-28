@@ -62,6 +62,7 @@ The `user` attributes are used to populate the config file (ossec.conf) and prel
 * `node['ossec']['user']['pf']` - Enable PF firewall on BSD, default is false.
 * `node['ossec']['user']['pf_table']` - The PF table to use on BSD. Default is false, set this to the desired table if enabling `pf`.
 * `node['ossec']['user']['white_list']` - Array of additional IP addresses to white list. Default is empty.
+* `node['ossec']['syscheck']['ignore']` - Array of files or directories for `syscheck` to ignore.
 
 Recipes
 ====
