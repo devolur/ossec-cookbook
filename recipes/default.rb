@@ -99,4 +99,10 @@ end
 service "ossec" do
   supports :status => true, :restart => true
   action [:enable, :start]
+  # Since the ossec-maild exits if mail is disabled, the status command always returns false,
+  # and the services are started, causing an extra delay.
+  # This tests whether maild is running when it shouldn't be, as well as allowing the :status action
+  # to not trigger a :start.
+  # Ultimately, this should be responsibility of the upstream init script's status command.
+  status_command '/etc/init.d/ossec status | grep -cq "ossec-maild not running"'
 end
